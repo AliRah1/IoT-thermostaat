@@ -1,0 +1,10 @@
+Componentenlijst
+Component	Functie	Aantal
+ESP32-C6	Microcontroller, verwerkt sensordata en stuurt Blynk updates	1
+DHT11	Temperatuursensor om actuele kamertemperatuur te meten	1
+Potentiometer (10kΩ)	Om handmatig de gewenste temperatuur in te stellen	1
+LED	Simulatie van de verwarmingsketel (aan/uit)	1
+Weerstand (220–330Ω)	Voor de LED, voorkomt doorbranden	1
+Verbindingsdraden / Jumper wires	Voor het verbinden van sensoren en LED met ESP32	n.a.
+Breadboard	Voor het opstellen van de schakeling	1
+Smartphone of tablet	Voor bediening en monitoring via Blynk-app	1
