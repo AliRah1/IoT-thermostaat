@@ -1,0 +1,76 @@
+#define BLYNK_TEMPLATE_ID "Ali"
+#define BLYNK_TEMPLATE_NAME "toets"
+#define BLYNK_AUTH_TOKEN "mFO8f1GD-jzFE6AwMAcJ5hDRHrEJDot7"
+
+#include <WiFi.h>
+#include <BlynkSimpleEsp32.h>
+#include <DHT11.h>
+
+char auth[] = BLYNK_AUTH_TOKEN;
+char ssid[] = "embed";
+char pass[] = "weareincontrol";
+
+DHT11 dht11(21);
+const int potPin = 4;
+const int ketelLed = 20;
+
+float actueleTemp;
+float gewensteTemp = 20.0;
+int vorigePotWaarde = 0; // Om beweging te detecteren
+float hysteresis = 0.5; // voorkomt constant schakelen
+
+// Blynk slider callback
+BLYNK_WRITE(V2) {
+  gewensteTemp = param.asFloat();
+  Serial.print("App Update: ");
+  Serial.println(gewensteTemp);
+}
+
+void setup() {
+  Serial.begin(115200);
+  pinMode(ketelLed, OUTPUT);
+  Blynk.begin(auth, ssid, pass);
+}
+
+void loop() {
+  Blynk.run();
+
+  // --- 1. Temperatuur lezen ---
+  int result = dht11.readTemperature();
+  if (result != DHT11::ERROR_CHECKSUM && result != DHT11::ERROR_TIMEOUT) {
+    actueleTemp = (float)result;
+  }
+
+  // --- 2. Potentiometer lezen ---
+  int huidigePotWaarde = analogRead(potPin);
+  if (abs(huidigePotWaarde - vorigePotWaarde) > 50) { 
+    gewensteTemp = (huidigePotWaarde / 4095.0) * 30.0;
+    vorigePotWaarde = huidigePotWaarde;
+    Blynk.virtualWrite(V2, gewensteTemp); 
+    Serial.print("Potmeter Update: ");
+    Serial.println(gewensteTemp);
+  }
+
+  // --- 3. Ketel logica ---
+  if (actueleTemp < (gewensteTemp - hysteresis)) {
+    digitalWrite(ketelLed, HIGH);
+  } else if (actueleTemp > (gewensteTemp + hysteresis)) {
+    digitalWrite(ketelLed, LOW);
+  }
+
+  // --- 4. Continu Serial Monitor feedback ---
+  Serial.print("Actueel: "); Serial.print(actueleTemp);
+  Serial.print(" | Doel: "); Serial.print(gewensteTemp);
+  Serial.print(" | Ketel: "); 
+  Serial.println(digitalRead(ketelLed) ? "AAN" : "UIT");
+
+  // --- 5. Periodieke updates naar Blynk ---
+  static unsigned long vorigeMillis = 0;
+  if (millis() - vorigeMillis > 2000) {
+    Blynk.virtualWrite(V1, actueleTemp); // Actuele temperatuur naar Gauge
+    Blynk.virtualWrite(V3, digitalRead(ketelLed) ? 255 : 0); // Ketel LED
+    vorigeMillis = millis();
+  }
+
+  delay(500); // korte delay zodat Serial monitor netjes blijft printen
+}
