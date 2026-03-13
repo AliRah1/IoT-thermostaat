@@ -1,0 +1,27 @@
+IoT Thermostaat Project
+
+Het project bestaat uit een slimme thermostaat gebouwd met een ESP32-C6 microcontroller, een DHT11 temperatuursensor, een potentiometer en een LED als simulatie van de verwarmingsketel. Het systeem werkt lokaal én via een Blynk-app op de smartphone.
+
+Functies:
+
+Temperatuur meten: De DHT11 sensor meet de actuele kamertemperatuur en stuurt deze naar de ESP32.
+
+Gewenste temperatuur instellen: De gebruiker kan de gewenste temperatuur instellen via een potentiometer of rechtstreeks via een slider in de Blynk-app.
+
+Ketel simulatie: Een LED geeft aan of de ketel “aan” of “uit” staat, gebaseerd op de ingestelde temperatuur en een hysteresis om constant schakelen te voorkomen.
+
+Blynk bediening: Via de app kan men de actuele temperatuur zien, de ketelstatus controleren en de gewenste temperatuur aanpassen, allemaal real-time.
+
+Werking:
+
+Als de gemeten temperatuur lager is dan de ingestelde temperatuur min hysteresis, gaat de ketel aan.
+
+Als de gemeten temperatuur hoger is dan de ingestelde temperatuur plus hysteresis, gaat de ketel uit.
+
+Zowel potentiometer als Blynk-slider werken samen, waarbij de slider prioriteit heeft voor bediening via de smartphone.
+
+De ESP32 stuurt continu gegevens naar de Blynk-app, zodat het systeem volledig op afstand te monitoren en te bedienen is.
+
+Doel:
+
+Het project toont hoe een IoT-oplossing voor huisverwarming werkt, waarbij lokale sensoren en afstandsbediening via smartphone worden gecombineerd voor slimme en efficiënte temperatuurregeling.
